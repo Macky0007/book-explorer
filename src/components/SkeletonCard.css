@@ -1,0 +1,68 @@
+/* Sizing intentionally mirrors BookCard.css so a skeleton and a real card
+   take up exactly the same footprint in the grid. */
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 21px;
+}
+
+.skeleton-card__cover,
+.skeleton-card__line {
+  border-radius: var(--radius-cover);
+  background: linear-gradient(
+    90deg,
+    var(--color-border-light) 25%,
+    var(--color-bg-cream-alt) 50%,
+    var(--color-border-light) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-card__cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  margin-bottom: 16px;
+}
+
+.skeleton-card__line {
+  border-radius: 4px;
+}
+
+.skeleton-card__line--title {
+  height: 20px;
+  width: 90%;
+  margin-bottom: 10px;
+}
+
+.skeleton-card__line--author {
+  height: 14px;
+  width: 60%;
+  margin-bottom: 8px;
+}
+
+.skeleton-card__line--year {
+  height: 12px;
+  width: 35%;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Respect users who've asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-card__cover,
+  .skeleton-card__line {
+    animation: none;
+  }
+}

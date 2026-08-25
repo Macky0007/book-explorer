@@ -1,0 +1,79 @@
+/* Wraps the form + the suggestions dropdown so the dropdown can be
+   absolutely positioned relative to the whole search bar, not just the
+   <form> element. Also the element used for outside-click detection. */
+.search-bar-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 672px;
+  margin: 0 auto;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: var(--color-white);
+  border: 2px solid rgba(135, 114, 113, 0.3);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-search);
+  transition: border-color 0.15s ease;
+}
+
+.search-bar:focus-within {
+  border-color: var(--color-primary);
+}
+
+.search-bar__icon {
+  position: absolute;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  width: 21px;
+  height: 21px;
+  color: rgba(84, 66, 65, 0.6);
+  pointer-events: none;
+}
+
+.search-bar__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 23px 24px 23px 66px;
+  font-family: var(--font-sans);
+  font-size: 18px;
+  color: var(--color-heading);
+  border-radius: inherit;
+}
+
+.search-bar__input::placeholder {
+  color: rgba(84, 66, 65, 0.6);
+}
+
+.search-bar__input:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.search-bar__button {
+  margin-right: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.7px;
+  white-space: nowrap;
+}
+
+.search-bar__button:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.search-bar__button:disabled {
+  background: var(--color-border);
+  cursor: not-allowed;
+}
