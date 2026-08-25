@@ -30,9 +30,6 @@ export default function Header({ onReset }) {
         <a href="#" className="header__nav-link header__nav-link--active">
           Discover
         </a>
-        <a href="#" className="header__nav-link">
-          Library
-        </a>
       </nav>
     </header>
   );

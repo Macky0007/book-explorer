@@ -9,6 +9,7 @@ import './App.css';
 // The four UI states this screen can be in, driven by one `status` value
 // instead of a loose collection of booleans (avoids impossible states like
 // "loading" and "error" being true at the same time).
+const SUGGESTED_SEARCHES = ['Dune', 'Harry Potter', 'Agatha Christie', 'The Hobbit', 'Sci-Fi'];
 const STATUS = {
   IDLE: 'idle',
   LOADING: 'loading',
@@ -59,6 +60,10 @@ export default function App() {
 
   const handleSearch = (value) => setSubmittedQuery(value);
   const handleRetry = () => setRetryToken((token) => token + 1);
+  const handleSuggestedSearch = (term) => {
+    setQuery(term);
+    setSubmittedQuery(term);
+  };
 
   // Logo/title click: clears everything and returns to the starting view.
   // Lives in App because App is the single owner of all this state —
@@ -90,9 +95,23 @@ export default function App() {
           {/* Conditional rendering: exactly one of these blocks renders per status */}
 
           {status === STATUS.IDLE && (
-            <p className="app__hint app__hint--center">
-              Search for a title or author to get started — try “dune”.
-            </p>
+            <div className="app__suggestions">
+              <p className="app__hint app__hint--center">
+                Search for a title or author to get started, or try one of these:
+              </p>
+              <div className="app__suggestion-chips">
+                {SUGGESTED_SEARCHES.map((term) => (
+                  <button
+                    key={term}
+                    type="button"
+                    className="app__suggestion-chip"
+                    onClick={() => handleSuggestedSearch(term)}
+                  >
+                    {term}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
 
           {status === STATUS.LOADING && (

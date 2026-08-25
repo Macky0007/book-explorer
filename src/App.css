@@ -36,6 +36,39 @@
   text-align: center;
 }
 
+.app__suggestions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.app__suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.app__suggestion-chip {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-chip-bg);
+  color: var(--color-body);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.app__suggestion-chip:hover,
+.app__suggestion-chip:focus-visible {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
 .app__status {
   display: flex;
   flex-direction: column;
