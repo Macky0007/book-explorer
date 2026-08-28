@@ -70,7 +70,7 @@ export default function SearchBar({ value, onChange, onSubmit, disabled }) {
     };
   }, [value]);
 
-  // ---- Effect: close dropdown on outside click ----------------------------
+    // ---- Effect: close dropdown on outside click ----------------------------
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
@@ -80,6 +80,20 @@ export default function SearchBar({ value, onChange, onSubmit, disabled }) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+    // ---- Effect: clear dropdown once a search starts loading ---------------
+  // Handles cases where a search is triggered from *outside* this
+  // component's own runSearch — e.g. the "suggested searches" chips on
+  // the idle screen, which set App's query/submittedQuery directly.
+  // We clear `suggestions` itself (not just close the dropdown) so that
+  // focusing the input again later — while results are showing — can't
+  // reopen it with stale data via the input's onFocus handler below.
+  useEffect(() => {
+    if (disabled) {
+      setSuggestions([]);
+      setSuggestionsOpen(false);
+    }
+  }, [disabled]);
 
   // ---- Event handling -------------------------------------------------------
   const runSearch = (term) => {
