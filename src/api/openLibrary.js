@@ -6,12 +6,11 @@ const SEARCH_BASE = 'https://openlibrary.org/search.json';
 const OPEN_LIBRARY_BASE = 'https://openlibrary.org';
 const COVERS_BASE = 'https://covers.openlibrary.org/b/id';
 
-/**
- * Search Open Library for books matching a free-text query.
- * @param {string} query
- * @param {AbortSignal} [signal] - lets callers cancel a stale/in-flight request
- * @returns {Promise<Array>} the array of matching book "docs"
- */
+// Search Open Library for books matching a free-text query.
+// `query` is the search text, and `signal` is an optional AbortSignal —
+// pass one in if you want to be able to cancel this request later
+// (e.g. the user typed something new before this search finished).
+// Returns an array of matching book "docs" (raw Open Library records).
 export async function searchBooks(query, signal) {
   const url = `${SEARCH_BASE}?q=${encodeURIComponent(query)}&limit=24`;
   const response = await fetch(url, { signal });
@@ -24,13 +23,12 @@ export async function searchBooks(query, signal) {
   return data.docs ?? [];
 }
 
-/**
- * Fetch extra details for a single book's "work" record: description,
- * subjects/genres, and an accurate edition count. This is the "second
- * API call" used to populate the details panel/modal.
- * @param {string} workKey - e.g. "/works/OL27448W" (from a search result's `key` field)
- * @param {AbortSignal} [signal]
- */
+// Fetch extra details for a single book's "work" record: description,
+// subjects/genres, and an accurate edition count. This is the "second
+// API call" used to populate the details panel/modal, once the user
+// clicks on a book from the search results.
+// `workKey` looks like "/works/OL27448W" — it comes from a search
+// result's `key` field. `signal` is optional, same as above.
 export async function getBookDetails(workKey, signal) {
   const [workResponse, editionsResponse] = await Promise.all([
     fetch(`${OPEN_LIBRARY_BASE}${workKey}.json`, { signal }),
@@ -56,15 +54,12 @@ export async function getBookDetails(workKey, signal) {
   };
 }
 
-/**
- * Fetch a short list of suggested search terms for the autocomplete
- * dropdown. Reuses the same search endpoint as `searchBooks`, but asks for
- * only a handful of results and a reduced field set — we only need enough
- * to build "title — author" labels, not full book records.
- * @param {string} query
- * @param {AbortSignal} [signal]
- * @returns {Promise<Array<{title: string, author: string|null}>>}
- */
+// Fetch a short list of suggested search terms for the autocomplete
+// dropdown. Reuses the same search endpoint as `searchBooks`, but asks for
+// only a handful of results and a reduced field set — we only need enough
+// to build "title — author" labels, not full book records.
+// Returns an array of objects shaped like { title, author }, where
+// `author` may be null if Open Library doesn't have one on file.
 export async function getSuggestions(query, signal) {
   const url = `${SEARCH_BASE}?q=${encodeURIComponent(query)}&limit=5&fields=title,author_name`;
   const response = await fetch(url, { signal });
@@ -80,12 +75,10 @@ export async function getSuggestions(query, signal) {
   }));
 }
 
-/**
- * Build a cover image URL for a given Open Library cover id.
- * Returns null when there's no cover, so callers can render a placeholder.
- * @param {number|undefined} coverId
- * @param {'S'|'M'|'L'} [size]
- */
+// Build a cover image URL for a given Open Library cover id.
+// `size` can be 'S' (small), 'M' (medium, the default), or 'L' (large).
+// Returns null when there's no cover id, so callers can render a
+// placeholder image instead of a broken <img>.
 export function getCoverUrl(coverId, size = 'M') {
   return coverId ? `${COVERS_BASE}/${coverId}-${size}.jpg` : null;
 }
