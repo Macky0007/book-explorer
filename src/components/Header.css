@@ -3,9 +3,8 @@
   align-items: center;
   gap: 32px;
   padding: 16px 24px;
-  background: rgba(255, 249, 235, 0.8);
-  backdrop-filter: blur(6px);
-  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  background: transparent;
+  backdrop-filter: blur(3px);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -14,14 +13,25 @@
 .header__logo {
   display: inline-flex;
   align-items: center;
+  gap: 10px;
   border: none;
   background: none;
   padding: 0;
-  font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: 24px;
-  color: var(--color-primary);
   cursor: pointer;
+}
+
+.header__logo-image {
+  height: 32px;
+  width: auto;
+}
+
+.header__logo-text {
+  font-family: 'Courier New', 'SFMono-Regular', Consolas, monospace;
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: 0.5px;
+  color: var(--color-white);
+  text-transform: uppercase;
 }
 
 .header__logo:focus-visible {
@@ -36,10 +46,12 @@
 }
 
 .header__nav-link {
-  font-size: 14px;
-  font-weight: 600;
+  font-family: 'Courier New', 'SFMono-Regular', Consolas, monospace;
+  font-size: 13px;
+  font-weight: 700;
   letter-spacing: 0.7px;
-  color: var(--color-body);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   padding-bottom: 4px;
 }

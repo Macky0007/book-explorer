@@ -1,4 +1,5 @@
 import './Header.css';
+import logo from '../assets/libraryBackgroundLogo-removebg-preview.png';
 
 /**
  * Site header, shown on every screen. This was previously inlined directly
@@ -17,13 +18,14 @@ export default function Header({ onReset }) {
       {/* A real <button> (not a styled <span>/<a href="#">) so this is
           reachable and activatable via keyboard, and clicking it can't
           also trigger an unwanted page navigation. */}
-      <button
+        <button
         type="button"
         className="header__logo"
         onClick={onReset}
         aria-label="MackBook home — reset search"
       >
-        📚 MackBook
+        <img src={logo} alt="" className="header__logo-image" />
+        <span className="header__logo-text">MACKBOOK</span>
       </button>
 
       <nav className="header__nav">
