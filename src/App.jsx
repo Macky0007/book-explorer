@@ -25,6 +25,12 @@ export default function App() {
   const [status, setStatus] = useState(STATUS.IDLE);     // loading / error / empty / results
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedBook, setSelectedBook] = useState(null); // book shown in the details modal
+  // Pagination: which page we're on, whether Open Library has more results
+  // beyond it, and whether a "Load more" fetch is currently in flight.
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [totalFound, setTotalFound] = useState(0); // total matches Open Library reports, not just what's loaded
   // Bumped by the Retry button to re-run the effect below for the *same*
   // submittedQuery (changing submittedQuery alone wouldn't re-trigger the
   // effect, since React skips effects whose dependencies didn't change).
@@ -42,14 +48,18 @@ export default function App() {
     setStatus(STATUS.LOADING);
     setErrorMessage('');
 
-    searchBooks(submittedQuery, controller.signal)
-      .then((results) => {
+      searchBooks(submittedQuery, { signal: controller.signal, page: 1 })
+      .then(({ books: results, hasMore: more, totalFound: total }) => {
         setBooks(results);
+        setPage(1);
+        setHasMore(more);
+        setTotalFound(total);
         setStatus(STATUS.SUCCESS);
       })
       .catch((err) => {
         if (err.name === 'AbortError') return; // a newer search superseded this one
         setBooks([]);
+        setHasMore(false);
         setStatus(STATUS.ERROR);
         setErrorMessage('Something went wrong while fetching books. Please try again.');
       });
@@ -63,6 +73,31 @@ export default function App() {
   const handleSuggestedSearch = (term) => {
     setQuery(term);
     setSubmittedQuery(term);
+  };
+
+  // Fetches the next page for the current search and appends it to the
+  // existing results, instead of replacing them (that's the "load more"
+  // rather than "search again" behavior).
+  const handleLoadMore = async () => {
+    if (loadingMore || !hasMore) return;
+
+    const nextPage = page + 1;
+    setLoadingMore(true);
+
+    try {
+      const { books: moreBooks, hasMore: more, totalFound: total } = await searchBooks(submittedQuery, {
+        page: nextPage,
+      });
+      setBooks((existingBooks) => [...existingBooks, ...moreBooks]);
+      setPage(nextPage);
+      setHasMore(more);
+      setTotalFound(total);
+    } catch (err) {
+      // Load-more failing isn't worth wiping the results already on screen —
+      // the button will just still be there for the user to try again.
+    } finally {
+      setLoadingMore(false);
+    }
   };
 
   // Logo/title click: clears everything and returns to the starting view.
@@ -145,10 +180,24 @@ export default function App() {
           {status === STATUS.SUCCESS && books.length > 0 && (
             <div className="app__results-panel">
               <p className="app__results-count">
-                Showing {books.length} result{books.length === 1 ? '' : 's'} for “{submittedQuery}”
+                Showing {totalFound.toLocaleString()} result
+                {totalFound === 1 ? '' : 's'} for “{submittedQuery}”
               </p>
               {/* Props: books + a selection callback flow down to BookList/BookCard */}
               <BookList books={books} onSelectBook={setSelectedBook} />
+
+              {hasMore && (
+                <div className="app__load-more">
+                  <button
+                    type="button"
+                    className="app__load-more-button"
+                    onClick={handleLoadMore}
+                    disabled={loadingMore}
+                  >
+                    {loadingMore ? 'Loading…' : 'Load more'}
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </section>

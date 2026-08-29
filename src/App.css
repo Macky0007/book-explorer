@@ -115,6 +115,33 @@
   background: var(--color-primary-dark);
 }
 
+.app__load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.app__load-more-button {
+  padding: 12px 32px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.7px;
+  cursor: pointer;
+}
+
+.app__load-more-button:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.app__load-more-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 @media (max-width: 600px) {
   .app__title {
     font-size: 32px;

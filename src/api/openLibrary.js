@@ -6,13 +6,18 @@ const SEARCH_BASE = 'https://openlibrary.org/search.json';
 const OPEN_LIBRARY_BASE = 'https://openlibrary.org';
 const COVERS_BASE = 'https://covers.openlibrary.org/b/id';
 
+// How many books we ask Open Library for per page/request.
+const RESULTS_PER_PAGE = 24;
+
 // Search Open Library for books matching a free-text query.
-// `query` is the search text, and `signal` is an optional AbortSignal —
-// pass one in if you want to be able to cancel this request later
-// (e.g. the user typed something new before this search finished).
-// Returns an array of matching book "docs" (raw Open Library records).
-export async function searchBooks(query, signal) {
-  const url = `${SEARCH_BASE}?q=${encodeURIComponent(query)}&limit=24`;
+// `query` is the search text. The second argument is an options object:
+//   - signal: optional AbortSignal, for cancelling an in-flight request
+//   - page:   which page of results to fetch (starts at 1)
+// Returns { books, totalFound, hasMore } — `books` is this page's results,
+// `totalFound` is how many results exist in total, and `hasMore` tells the
+// caller whether there's a next page worth fetching.
+export async function searchBooks(query, { signal, page = 1 } = {}) {
+  const url = `${SEARCH_BASE}?q=${encodeURIComponent(query)}&limit=${RESULTS_PER_PAGE}&page=${page}`;
   const response = await fetch(url, { signal });
 
   if (!response.ok) {
@@ -20,7 +25,14 @@ export async function searchBooks(query, signal) {
   }
 
   const data = await response.json();
-  return data.docs ?? [];
+  const books = data.docs ?? [];
+  const totalFound = data.numFound ?? books.length;
+
+  return {
+    books,
+    totalFound,
+    hasMore: page * RESULTS_PER_PAGE < totalFound,
+  };
 }
 
 // Fetch extra details for a single book's "work" record: description,
