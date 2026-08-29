@@ -115,13 +115,13 @@ export default function App() {
           )}
 
           {status === STATUS.LOADING && (
-            <>
+            <div className="app__results-panel">
               <p className="app__results-count" role="status">
                 Searching for “{submittedQuery}”…
               </p>
               {/* Skeleton cards matching BookCard's layout, instead of a plain spinner */}
               <BookList loading />
-            </>
+            </div>
           )}
 
           {status === STATUS.ERROR && (
@@ -143,13 +143,13 @@ export default function App() {
           )}
 
           {status === STATUS.SUCCESS && books.length > 0 && (
-            <>
+            <div className="app__results-panel">
               <p className="app__results-count">
                 Showing {books.length} result{books.length === 1 ? '' : 's'} for “{submittedQuery}”
               </p>
               {/* Props: books + a selection callback flow down to BookList/BookCard */}
               <BookList books={books} onSelectBook={setSelectedBook} />
-            </>
+            </div>
           )}
         </section>
       </main>
